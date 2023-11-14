@@ -69,9 +69,9 @@ const getAllBooksHandler = () => {
     if(bookArray.length > 0){
         const books = bookArray.map(book => {
             return {
-            id: book.id,
-            name: book.name,
-            publisher: book.publisher
+                id: book.id,
+                name: book.name,
+                publisher: book.publisher
             };
         });
         return {
