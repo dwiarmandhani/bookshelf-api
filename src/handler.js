@@ -8,8 +8,8 @@ const addBooksHandler = async (request, h) => {
     const { nanoid } = nanoidModule;
 
     const id = nanoid(16);
-    const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
+    const insertedAt = new Date().toISOString();
+    const updatedAt = insertedAt;
 
     var finished = false;
     if (pageCount === readPage) {
@@ -17,7 +17,7 @@ const addBooksHandler = async (request, h) => {
     };
 
     const newBooks = {
-        id, name, year, author, summary, publisher, pageCount, readPage, reading, finished, createdAt, updatedAt
+        id, name, year, author, summary, publisher, pageCount, readPage, reading, finished, insertedAt, updatedAt
     };
 
     books.push(newBooks);
@@ -37,7 +37,7 @@ const addBooksHandler = async (request, h) => {
             } else {
                 const response = h.response({
                     status: 'success',
-                    message: 'buku berhasil ditambahkan',
+                    message: 'Buku berhasil ditambahkan',
                     data: {
                         bookId: id,
                     },
@@ -66,20 +66,20 @@ const addBooksHandler = async (request, h) => {
 const getAllBooksHandler = () => {
     const bookArray = books;
 
-    if(bookArray !==[]){
-    const books = bookArray.map(book => {
+    if(bookArray.length > 0){
+        const books = bookArray.map(book => {
+            return {
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher
+            };
+        });
         return {
-          id: book.id,
-          name: book.name,
-          publisher: book.publisher
+            status: 'success',
+            data: {
+                books,
+            },
         };
-    });
-    return {
-        status: 'success',
-        data: {
-            books,
-        },
-    };
     }
 
     return {
@@ -129,6 +129,7 @@ const editBukuByIdHandler = (request, h) => {
 
     const updatedAt = new Date().toISOString();
     const index = books.findIndex((book) => book.id === id);
+    const insertedAt = books.filter((n) => n.id === id)[0].insertedAt;
 
     if(index !== -1){
         if(name && name !== ""){
@@ -151,6 +152,7 @@ const editBukuByIdHandler = (request, h) => {
                     pageCount,
                     readPage,
                     reading,
+                    insertedAt,
                     updatedAt
                 };
                 const response = h.response({
