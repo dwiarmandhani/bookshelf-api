@@ -20,11 +20,6 @@ const addBooksHandler = async (request, h) => {
         id, name, year, author, summary, publisher, pageCount, readPage, reading, finished, insertedAt, updatedAt
     };
 
-    books.push(newBooks);
-
-    const isSuccess = books.filter((book) => book.id === id).length > 0;
-
-    if(isSuccess){
         if(name && name !== ""){
             if(readPage > pageCount){
                 const response = h.response({
@@ -35,15 +30,28 @@ const addBooksHandler = async (request, h) => {
                 response.code(400);
                 return response;
             } else {
-                const response = h.response({
-                    status: 'success',
-                    message: 'Buku berhasil ditambahkan',
-                    data: {
-                        bookId: id,
-                    },
-                });
-                response.code(201);
-                return response;
+                books.push(newBooks);
+                const isSuccess = books.filter((book) => book.id === id).length > 0;
+
+                if (isSuccess) {
+                    const response = h.response({
+                        status: 'success',
+                        message: 'Buku berhasil ditambahkan',
+                        data: {
+                            bookId: id,
+                        },
+                    });
+                    response.code(201);
+                    return response;
+                } else {
+                    const response = h.response({
+                        status: 'fail',
+                        message: 'Catatan gagal ditambahkan',
+                    });
+                
+                    response.code(500);
+                    return response;
+                }
             }
         } else {
             const response = h.response({
@@ -53,42 +61,30 @@ const addBooksHandler = async (request, h) => {
             response.code(400);
             return response;
         }
-    }
-    const response = h.response({
-        status: 'fail',
-        message: 'Catatan gagal ditambahkan',
-    });
-
-    response.code(500);
-    return response;
+    
 };
 
 const getAllBooksHandler = () => {
-    const bookArray = books;
-
-    if(bookArray.length > 0){
-        const books = bookArray.map(book => {
-            return {
-                id: book.id,
-                name: book.name,
-                publisher: book.publisher
-            };
-        });
+    if (books.length > 0) {
+        const modifiedBooks = books.map(book => ({
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher
+        }));
         return {
             status: 'success',
             data: {
-                books,
+              books: modifiedBooks
             },
         };
     } else {
         return {
             status: 'success',
             data: {
-                books,
+              books: []
             },
         };
     }
-
 }
 
 const getBooksByIdHandler = (request, h) => {
